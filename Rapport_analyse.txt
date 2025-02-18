@@ -47,7 +47,7 @@ Dans notre dataset nous avons 110 femmes ce qui represente 55.27% et 89 hommes c
 99 n'ont pas survecus (49.74%)
 
 
-Analyse Bivariée variables discrètes :
+Test Analyse Bivariée variables discrètes :
 
 - cross_tab_Survived_Gender:
 Sur 11O femmes, 60 n'ont pas survecus, 50 ont survecus
@@ -60,3 +60,42 @@ pour ceux qui en ont mis 52 personnes n'ont pas survecus et 59 ont survecus.
 - cross_tab_Survived_Helmet_Used:
 Pour les personnes qui n'ont pas mis de casques 42 personnes n'ont pas survecus et 47ont survecus.
 pour ceux qui en ont mis 57 personnes n'ont pas survecus et 54 ont survecus.
+
+
+Tests statistiques:
+
+- Bivariées disvrètes :
+Les conditions pour utiliser le Chi2 de contengency :
+- Les données doivent être independantes, par exemple dans le cas de la variable "Gender" les données sont independantes c'est-à-dire le genre d'une personne n'influence pas sur son voisin et même chose pour l'âge et les données viennent de la même population. Condition Ok
+
+- Les variables ont plus de 30 données
+
+L’hypothèse H0 : Nos deux variables sont independantes 
+L’hypothèse H1 : Nos deux variables sont dependantes 
+
+pvalue: Est la probabilité d’observer une différence au moins aussi extrême que nous avons observée lors de nos analyses.
+
+Valeur seuil: alpha=5% (0,005)
+Si pvalue < alpha on rejettera l'hypothèse H0, sinon on ne rejettera pas H0
+
+- cross_tab_Survived_Gender:
+La valeur de pvalue est 0.12857383013481866
+La valeur de pvalue 0.12857383013481866 étant superieur à 0.05, on ne rejette pas l'hypothèse nulle 
+Les variables 'Survived' et 'Age' sont indépendantes
+
+- cross_tab_Survived_Seatbelt_Used:
+La valeur de pvalue est 0.48654941737349877
+La valeur de pvalue 0.48654941737349877 étant superieur à 0.05, on ne rejette pas l'hypothèse nulle 
+Les variables 'Survived' et 'Seatbelt_Used' sont indépendantes
+
+- cross_tab_Survived_Helmet_Used:
+La valeur de pvalue est 0.6581072801152705
+La valeur de pvalue 0.6581072801152705 étant superieur à 0.05, on ne rejette pas l'hypothèse nulle 
+Les variables 'Survived' et 'SeatbelHelmet_Usedt_Used' sont indépendantes
+
+
+Test Analyse Bivariée variables continues:
+L'hypothèse H0: IL n'y a pas de corrélation entre l'age et la vitesse d'impact
+L'hypothèse H1: IL y a une corrélation entre l'age et la vitesse d'impact
+La valeur de pvalue est 0.13612764699731406
+La valeur de pvalue 0.13612764699731406 étant superieur à 0.05, on ne rejettera pas l'hypothèse H0 
