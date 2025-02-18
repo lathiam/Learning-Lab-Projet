@@ -1,0 +1,6 @@
+Action	Commande
+Installer Jupyter	poetry add jupyter notebook ipykernel
+Lancer Jupyter	poetry run jupyter notebook
+Exécuter un notebook	poetry run jupyter nbconvert --to notebook --execute mon_notebook.ipynb
+Exécuter et écraser	poetry run jupyter nbconvert --to notebook --execute --inplace mon_notebook.ipynb
+Ajouter un Kernel Poetry	poetry run python -m ipykernel install --user --name=poetry_env --display-name "Python (Poetry)"

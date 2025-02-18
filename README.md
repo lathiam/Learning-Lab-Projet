@@ -1,0 +1,3 @@
+Cet ensemble de données contient des enregistrements détaillés de données simulées sur des accidents de la route, en mettant l'accent sur les facteurs influençant les résultats de survie. L'ensemble de données comprend des attributs démographiques, comportementaux et situationnels, fournissant des informations précieuses sur la manière dont divers facteurs influent sur la probabilité de survie lors d'accidents de la route.
+
+Le but de ce projet est d'analyse l'influence des facteurs sur le faite qu'une personne fasse d'accident ou pas et de developper un modèle de machine learning de prédiction.
