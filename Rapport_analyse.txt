@@ -1,0 +1,35 @@
+Dans notre dataset nous avons 6 colonnes et 200 individus.
+Toutes les colonnes completes sauf la colonne Speed_of_Impact où on a que 197 valeurs au lieu de 200.
+Ce qui veut dire que nous avons trois valeurs maquantes dans cette colonne.
+
+Analyse Univariée variables Continues :
+
+- Age:
+L'age moyen des personnes dans notre jeu de données est de : 43.42 ans
+L'age minimum est de 18 ans et l'age maximun est de 69 ans
+25% ont ou moins de 31 ans
+
+- Speed_of_Impact:
+La vitesse d'impact moyenne est de : 70.44 km/h.
+Plus cette vitesse est elevée plus le choc est violent.
+En comparaison de la valeur des autorités françaises 80 km/h entraîne quasi inévitablement la mort 
+ou des séquelles irréversibles pour tout passager, même ceinturé
+La valeur minimum est de 20.00 km/h ce qui signifie moins d'impact lors du choc
+La valeur maximum est de 119 km/h ce qui entraine la mort inevitable 
+Nous avons 50% des individus ont une vitesse d'impact inferieure ou égale à 71 km/h
+
+
+En regardant les histogrammes de nos deux variables, elles ne sont pas normalement repartie.
+En regardant les boxplots les deux variables n'ont pas d'outliers.
+
+Ces observations doivent être verifiées et validées par des tests statistiques d'hypothèses que nous allons réalisés 
+à la fin de nos analyse univariée et bivariée.
+
+Analyse Bivariée variables Continues :
+
+En regardant le scatterplot la variable "Speed_of_Impact" en fonction de la variable "Age" 
+nous n'observons pas de correlation entre ces deux variables, obseravtions à faire validée par
+le test statistique de Pearson.
+
+- Gender:
+Dans notre dataset nous avons 110 femmes ce qui represente 55.27% et 89 hommes ce qui represente 44.72%
