@@ -11,6 +11,7 @@ from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
+from sklearn.impute import SimpleImputer
 
 # Configuration de l'application
 st.set_page_config(page_title="Analyse des Accidents de la Route", layout="wide")
@@ -91,18 +92,96 @@ elif page == "Pre-processing":
     X = df.drop(columns=['Survived'])
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
     st.write("Jeu d'entraînement et de test créé.")
-    
-    # Normalisation et Encodage
-    scaler = MinMaxScaler()
-    encoder = OneHotEncoder(sparse_output=False)
-    X_train_scaled = scaler.fit_transform(X_train.select_dtypes(include=[np.number]))
-    X_test_scaled = scaler.transform(X_test.select_dtypes(include=[np.number]))
-    st.write("Données normalisées avec MinMaxScaler.")
+    num_cols = X_train.select_dtypes(include=[np.number]).columns.tolist()
+    cat_cols = X_train.select_dtypes(include=[object]).columns.tolist()
+
+    manip_option = st.multiselect(
+        "Sélectionnez les manipulations à appliquer:",
+        ["Imputation des NaN", "Normalisation", "Encodage", "Suppression des NaN", "Afficher les résultats"],
+        default=["Imputation des NaN", "Normalisation", "Encodage", "Afficher les résultats"]
+    )
+
+    # Initialisation
+    X_train_num = X_train[num_cols]
+    X_test_num = X_test[num_cols]
+    X_train_cat = X_train[cat_cols]
+    X_test_cat = X_test[cat_cols]
+
+    # Imputation
+    if "Imputation des NaN" in manip_option:
+        imputer_num = SimpleImputer(strategy='mean')
+        imputer_cat = SimpleImputer(strategy='most_frequent')
+        X_train_num = pd.DataFrame(imputer_num.fit_transform(X_train_num), columns=num_cols)
+        X_test_num = pd.DataFrame(imputer_num.transform(X_test_num), columns=num_cols)
+        X_train_cat = pd.DataFrame(imputer_cat.fit_transform(X_train_cat), columns=cat_cols)
+        X_test_cat = pd.DataFrame(imputer_cat.transform(X_test_cat), columns=cat_cols)
+
+    # Normalisation
+    if "Normalisation" in manip_option:
+        scaler = MinMaxScaler()
+        X_train_num = pd.DataFrame(scaler.fit_transform(X_train_num), columns=num_cols)
+        X_test_num = pd.DataFrame(scaler.transform(X_test_num), columns=num_cols)
+
+    # Encodage
+    if "Encodage" in manip_option:
+        encoder = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
+        X_train_cat = pd.DataFrame(encoder.fit_transform(X_train_cat), columns=encoder.get_feature_names_out(cat_cols))
+        X_test_cat = pd.DataFrame(encoder.transform(X_test_cat), columns=encoder.get_feature_names_out(cat_cols))
+
+    # Concaténation
+    import numpy as np
+    X_train_scaled = np.concatenate([X_train_num, X_train_cat], axis=1)
+    X_test_scaled = np.concatenate([X_test_num, X_test_cat], axis=1)
+
+    # Suppression des lignes contenant des NaN
+    if "Suppression des NaN" in manip_option:
+        mask_train = ~np.isnan(X_train_scaled).any(axis=1)
+        mask_test = ~np.isnan(X_test_scaled).any(axis=1)
+        X_train_scaled = X_train_scaled[mask_train]
+        Y_train = Y_train.reset_index(drop=True)[mask_train]
+        X_test_scaled = X_test_scaled[mask_test]
+        Y_test = Y_test.reset_index(drop=True)[mask_test]
+
+    # Affichage des résultats
+    if "Afficher les résultats" in manip_option:
+        st.write("Données après prétraitement :")
+        st.write(f"X_train shape: {X_train_scaled.shape}")
+        st.write(f"X_test shape: {X_test_scaled.shape}")
+        st.write(f"Y_train shape: {Y_train.shape}")
+        st.write(f"Y_test shape: {Y_test.shape}")
 
 elif page == "Modélisation":
     st.title("Modélisation et Évaluation")
     model_choice = st.selectbox("Choisissez un modèle", ["Régression Logistique", "Random Forest", "XGBoost", "KNN"])
-    
+    # On refait le preprocessing pour garantir la cohérence et gérer les NaN
+    Y = df['Survived']
+    X = df.drop(columns=['Survived'])
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
+    num_cols = X_train.select_dtypes(include=[np.number]).columns.tolist()
+    cat_cols = X_train.select_dtypes(include=[object]).columns.tolist()
+    from sklearn.impute import SimpleImputer
+    imputer_num = SimpleImputer(strategy='mean')
+    imputer_cat = SimpleImputer(strategy='most_frequent')
+    X_train_num = imputer_num.fit_transform(X_train[num_cols])
+    X_test_num = imputer_num.transform(X_test[num_cols])
+    X_train_cat = imputer_cat.fit_transform(X_train[cat_cols])
+    X_test_cat = imputer_cat.transform(X_test[cat_cols])
+    scaler = MinMaxScaler()
+    encoder = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
+    X_train_num = scaler.fit_transform(X_train_num)
+    X_test_num = scaler.transform(X_test_num)
+    X_train_cat = encoder.fit_transform(X_train_cat)
+    X_test_cat = encoder.transform(X_test_cat)
+    import numpy as np
+    X_train_scaled = np.concatenate([X_train_num, X_train_cat], axis=1)
+    X_test_scaled = np.concatenate([X_test_num, X_test_cat], axis=1)
+    # Suppression des lignes contenant des NaN dans X_train_scaled et X_test_scaled
+    mask_train = ~np.isnan(X_train_scaled).any(axis=1)
+    mask_test = ~np.isnan(X_test_scaled).any(axis=1)
+    X_train_scaled = X_train_scaled[mask_train]
+    Y_train = Y_train.reset_index(drop=True)[mask_train]
+    X_test_scaled = X_test_scaled[mask_test]
+    Y_test = Y_test.reset_index(drop=True)[mask_test]
     if model_choice == "Régression Logistique":
         model = LogisticRegression()
     elif model_choice == "Random Forest":
@@ -111,7 +190,6 @@ elif page == "Modélisation":
         model = XGBClassifier()
     elif model_choice == "KNN":
         model = KNeighborsClassifier()
-    
     model.fit(X_train_scaled, Y_train)
     y_pred = model.predict(X_test_scaled)
     accuracy = accuracy_score(Y_test, y_pred)
